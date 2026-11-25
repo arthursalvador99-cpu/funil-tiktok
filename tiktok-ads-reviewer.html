@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TikTok Ads Reviewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #010101; color: white; font-family: 'Proxima Nova', sans-serif; overflow-x: hidden; }
+        .tiktok-gradient { background: linear-gradient(45deg, #EE1D52, #69C9B6); }
+        .tiktok-border { border: 2px solid #EE1D52; }
+        .btn-tiktok { background-color: #FE2C55; transition: all 0.2s; }
+        .btn-tiktok:active { transform: scale(0.95); background-color: #d62348; }
+        .balance-anim { animation: countUp 1.5s ease-out; }
+        @keyframes countUp { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .video-placeholder { background: linear-gradient(180deg, #121212 0%, #000000 100%); border-radius: 12px; position: relative; aspect-ratio: 9/16; }
+    </style>
+</head>
+<body class="flex justify-center items-start min-h-screen">
+
+    <!-- Mobile Wrapper -->
+    <div id="app" class="w-full max-w-md min-h-screen bg-black border-x border-gray-800 relative pb-10">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center p-4 border-b border-gray-800 sticky top-0 bg-black z-50">
+            <div class="flex items-center gap-2">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/1200px-TikTok_logo.svg.png" class="h-6" alt="TikTok">
+                <span class="text-xs font-bold tracking-tighter uppercase opacity-80">Ads Reviewer</span>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] text-gray-400 uppercase font-bold">Demo Balance</p>
+                <p id="balance" class="text-lg font-black text-white">$49.00</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="p-4">
+            
+            <!-- Step 1: Video Feed -->
+            <div id="step-video" class="space-y-4">
+                <div class="flex justify-between text-xs font-bold uppercase text-gray-500">
+                    <span id="review-count">Review 1 of 3</span>
+                    <span id="progress-text">0/3 done</span>
+                </div>
+                
+                <!-- Video Area -->
+                <div class="video-placeholder flex flex-col items-center justify-center text-center p-6 border border-gray-800">
+                    <div class="absolute top-4 right-4 text-gray-500 cursor-pointer"><i class="fa-solid fa-expand"></i></div>
+                    <i class="fa-solid fa-circle-play text-5xl mb-4 opacity-20"></i>
+                    <p class="text-sm font-medium opacity-60 uppercase tracking-widest">Video Placeholder</p>
+                    <p class="text-[10px] opacity-40 mt-2 italic">Simulated Ad Environment</p>
+                    
+                    <div class="absolute bottom-6 left-6 text-left">
+                        <p class="text-xs font-bold">@sample.creator.one</p>
+                        <p class="text-[10px] opacity-70">Reviewing daily routine content...</p>
+                    </div>
+                </div>
+
+                <!-- Question Block -->
+                <div id="question-area" class="mt-6 space-y-4">
+                    <p class="text-center font-bold text-sm">How entertaining was this video?</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="selectOption(this)" class="option-btn p-3 border border-gray-700 rounded-lg text-xs font-bold hover:border-[#FE2C55]">Excellent</button>
+                        <button onclick="selectOption(this)" class="option-btn p-3 border border-gray-700 rounded-lg text-xs font-bold hover:border-[#FE2C55]">Good</button>
+                        <button onclick="selectOption(this)" class="option-btn p-3 border border-gray-700 rounded-lg text-xs font-bold hover:border-[#FE2C55]">Average</button>
+                        <button onclick="selectOption(this)" class="option-btn p-3 border border-gray-700 rounded-lg text-xs font-bold hover:border-[#FE2C55]">Poor</button>
+                    </div>
+                </div>
+
+                <button id="submit-btn" onclick="nextStep()" class="w-full py-4 btn-tiktok rounded-full font-black uppercase text-sm tracking-wide mt-4 opacity-50 cursor-not-allowed" disabled>
+                    Submit Review <i class="fa-solid fa-paper-plane ml-2"></i>
+                </button>
+            </div>
+
+            <!-- Step 2: Completion Modal (Hidden) -->
+            <div id="step-final" class="hidden flex flex-col items-center justify-center py-20 text-center space-y-6">
+                <div class="w-20 h-20 rounded-full border-4 border-[#69C9B6] border-t-transparent animate-spin"></div>
+                <h2 class="text-2xl font-black uppercase">All Reviews Completed</h2>
+                <div class="bg-gray-900 p-6 rounded-2xl w-full border border-gray-800">
+                    <p class="text-xs text-gray-400 uppercase font-bold mb-2">Your estimated balance</p>
+                    <p class="text-5xl font-black text-white">$178.00</p>
+                    <p class="text-[10px] text-gray-500 mt-2">Demo only • No cash value</p>
+                </div>
+                <button onclick="location.reload()" class="w-full py-4 btn-tiktok rounded-full font-black uppercase text-sm">
+                    Continue to Video <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+
+        </main>
+
+        <footer class="absolute bottom-4 left-0 w-full text-center px-6">
+            <p class="text-[9px] text-gray-600 leading-tight">
+                Educational prototype. Balances are simulated, have no monetary value and cannot be withdrawn. Not affiliated with TikTok.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let balance = 49.00;
+        const rewards = [43.00, 43.00, 43.00];
+
+        function selectOption(btn) {
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('border-[#FE2C55', 'bg-[#FE2C55]');
+            btn.classList.add('border-[#FE2C55]', 'bg-[#FE2C55]');
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('submit-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function nextStep() {
+            if (currentStep < 3) {
+                // Update Balance
+                balance += rewards[currentStep - 1];
+                const balanceEl = document.getElementById('balance');
+                balanceEl.innerText = `$${balance.toFixed(2)}`;
+                balanceEl.classList.add('balance-anim');
+                setTimeout(() => balanceEl.classList.remove('balance-anim'), 1000);
+
+                // Update Progress
+                currentStep++;
+                document.getElementById('review-count').innerText = `Review ${currentStep} of 3`;
+                document.getElementById('progress-text').innerText = `${currentStep - 1}/3 done`;
+                
+                // Reset UI for next video
+                document.getElementById('submit-btn').disabled = true;
+                document.getElementById('submit-btn').classList.add('opacity-50', 'cursor-not-allowed');
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('border-[#FE2C55]', 'bg-[#FE2C55]'));
+            } else {
+                // Final Step
+                document.getElementById('step-video').classList.add('hidden');
+                document.getElementById('step-final').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
